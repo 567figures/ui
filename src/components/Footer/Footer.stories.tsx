@@ -69,24 +69,21 @@ function renderSocialIcon(platform: string): React.ReactNode {
   return <span>{icons[platform] ?? '🔗'}</span>;
 }
 
-// ── Full Footer story ─────────────────────────────────────────────────
+// ── Meta ──────────────────────────────────────────────────────────────
 
-function FullFooter({
-  columns,
-  socialLinks,
-  subtitle,
-  siteTitle,
-  showSocials,
-  showColumns,
-}: {
-  columns: FooterColumn[];
-  socialLinks: FooterSocialLinks;
-  subtitle: string;
-  siteTitle: string;
-  showSocials: boolean;
-  showColumns: boolean;
-}) {
-  return (
+const meta: Meta = {
+  title: 'Components/Footer',
+  parameters: {
+    layout: 'fullscreen',
+  },
+};
+
+export default meta;
+
+// ── Full composition ──────────────────────────────────────────────────
+
+export const Default: StoryObj = {
+  render: () => (
     <FooterProvider renderSocialIcon={renderSocialIcon}>
       <FooterRoot>
         <FooterContent>
@@ -96,79 +93,184 @@ function FullFooter({
                 🎨 567f
               </Text>
             </FooterLogo>
-            <FooterSubtitle text={subtitle} />
-            {showSocials && <FooterSocials socialLinks={socialLinks} />}
+            <FooterSubtitle text="Building the future of digital experiences." />
+            <FooterSocials socialLinks={mockSocialLinks} />
           </FooterBrand>
-          {showColumns && <FooterColumns columns={columns} />}
+          <FooterColumns columns={mockColumns} />
+        </FooterContent>
+        <FooterBottom siteTitle="567 Figures" />
+      </FooterRoot>
+    </FooterProvider>
+  ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+import {
+  FooterProvider,
+  FooterRoot,
+  FooterContent,
+  FooterBrand,
+  FooterLogo,
+  FooterSubtitle,
+  FooterSocials,
+  FooterColumns,
+  FooterBottom,
+} from '@567f/ui';
+
+export function Footer({ columns, socialLinks, subtitle, siteTitle, logo }) {
+  return (
+    <FooterProvider
+      linkComponent={NextLink}
+      renderSocialIcon={(platform) => <SocialIcon platform={platform} />}
+    >
+      <FooterRoot>
+        <FooterContent>
+          <FooterBrand>
+            <FooterLogo>
+              <img src={logo} alt={siteTitle} />
+            </FooterLogo>
+            <FooterSubtitle text={subtitle} />
+            <FooterSocials socialLinks={socialLinks} />
+          </FooterBrand>
+          <FooterColumns columns={columns} />
         </FooterContent>
         <FooterBottom siteTitle={siteTitle} />
       </FooterRoot>
     </FooterProvider>
   );
 }
-
-const meta: Meta<typeof FullFooter> = {
-  title: 'Components/Footer',
-  component: FullFooter,
-  parameters: {
-    layout: 'fullscreen',
-    docs: {
-      source: {
-        language: 'tsx',
-        type: 'code',
+`,
       },
     },
   },
-  argTypes: {
-    showSocials: { control: 'boolean' },
-    showColumns: { control: 'boolean' },
+};
+
+export const NoSocials: StoryObj = {
+  render: () => (
+    <FooterProvider renderSocialIcon={renderSocialIcon}>
+      <FooterRoot>
+        <FooterContent>
+          <FooterBrand>
+            <FooterLogo>
+              <Text fontSize="$6" fontWeight="bold">
+                🎨 567f
+              </Text>
+            </FooterLogo>
+            <FooterSubtitle text="Building the future of digital experiences." />
+          </FooterBrand>
+          <FooterColumns columns={mockColumns} />
+        </FooterContent>
+        <FooterBottom siteTitle="567 Figures" />
+      </FooterRoot>
+    </FooterProvider>
+  ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+// Without social icons
+<FooterProvider>
+  <FooterRoot>
+    <FooterContent>
+      <FooterBrand>
+        <FooterLogo>...</FooterLogo>
+        <FooterSubtitle text={subtitle} />
+      </FooterBrand>
+      <FooterColumns columns={columns} />
+    </FooterContent>
+    <FooterBottom siteTitle={siteTitle} />
+  </FooterRoot>
+</FooterProvider>
+`,
+      },
+    },
   },
 };
 
-export default meta;
-type Story = StoryObj<typeof FullFooter>;
-
-export const Default: Story = {
-  args: {
-    columns: mockColumns,
-    socialLinks: mockSocialLinks,
-    subtitle: 'Building the future of digital experiences.',
-    siteTitle: '567 Figures',
-    showSocials: true,
-    showColumns: true,
+export const NoColumns: StoryObj = {
+  render: () => (
+    <FooterProvider renderSocialIcon={renderSocialIcon}>
+      <FooterRoot>
+        <FooterContent>
+          <FooterBrand>
+            <FooterLogo>
+              <Text fontSize="$6" fontWeight="bold">
+                🎨 567f
+              </Text>
+            </FooterLogo>
+            <FooterSubtitle text="Building the future of digital experiences." />
+            <FooterSocials socialLinks={mockSocialLinks} />
+          </FooterBrand>
+        </FooterContent>
+        <FooterBottom siteTitle="567 Figures" />
+      </FooterRoot>
+    </FooterProvider>
+  ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+// Without navigation columns — just brand + bottom
+<FooterProvider renderSocialIcon={renderSocialIcon}>
+  <FooterRoot>
+    <FooterContent>
+      <FooterBrand>
+        <FooterLogo>...</FooterLogo>
+        <FooterSubtitle text={subtitle} />
+        <FooterSocials socialLinks={socialLinks} />
+      </FooterBrand>
+    </FooterContent>
+    <FooterBottom siteTitle={siteTitle} />
+  </FooterRoot>
+</FooterProvider>
+`,
+      },
+    },
   },
 };
 
-export const NoSocials: Story = {
-  args: {
-    columns: mockColumns,
-    socialLinks: mockSocialLinks,
-    subtitle: 'Building the future of digital experiences.',
-    siteTitle: '567 Figures',
-    showSocials: false,
-    showColumns: true,
-  },
-};
-
-export const NoColumns: Story = {
-  args: {
-    columns: mockColumns,
-    socialLinks: mockSocialLinks,
-    subtitle: 'Building the future of digital experiences.',
-    siteTitle: '567 Figures',
-    showSocials: true,
-    showColumns: false,
-  },
-};
-
-export const Minimal: Story = {
-  args: {
-    columns: [],
-    socialLinks: {},
-    subtitle: '',
-    siteTitle: '567 Figures',
-    showSocials: false,
-    showColumns: false,
+export const Minimal: StoryObj = {
+  render: () => (
+    <FooterProvider>
+      <FooterRoot>
+        <FooterContent>
+          <FooterBrand>
+            <FooterLogo>
+              <Text fontSize="$6" fontWeight="bold">
+                🎨 567f
+              </Text>
+            </FooterLogo>
+          </FooterBrand>
+        </FooterContent>
+        <FooterBottom siteTitle="567 Figures" />
+      </FooterRoot>
+    </FooterProvider>
+  ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+// Minimal footer — just logo and copyright
+<FooterProvider>
+  <FooterRoot>
+    <FooterContent>
+      <FooterBrand>
+        <FooterLogo>
+          <img src="/logo.svg" alt="Logo" />
+        </FooterLogo>
+      </FooterBrand>
+    </FooterContent>
+    <FooterBottom siteTitle="My App" />
+  </FooterRoot>
+</FooterProvider>
+`,
+      },
+    },
   },
 };
 
@@ -182,6 +284,27 @@ export const JustColumns: StoryObj = {
       </div>
     </FooterProvider>
   ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+<FooterProvider linkComponent={MyLink}>
+  <FooterColumns columns={[
+    {
+      _key: '1',
+      title: 'Product',
+      links: [
+        { _key: '1a', name: 'Features', href: '/features' },
+        { _key: '1b', name: 'Pricing', href: '/pricing' },
+      ],
+    },
+  ]} />
+</FooterProvider>
+`,
+      },
+    },
+  },
 };
 
 export const JustSocials: StoryObj = {
@@ -192,6 +315,22 @@ export const JustSocials: StoryObj = {
       </div>
     </FooterProvider>
   ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+<FooterProvider renderSocialIcon={(platform) => <SocialIcon platform={platform} />}>
+  <FooterSocials socialLinks={{
+    instagram: 'https://instagram.com/...',
+    facebook: 'https://facebook.com/...',
+    twitter: 'https://twitter.com/...',
+  }} />
+</FooterProvider>
+`,
+      },
+    },
+  },
 };
 
 export const JustBottom: StoryObj = {
@@ -202,6 +341,18 @@ export const JustBottom: StoryObj = {
       </div>
     </FooterProvider>
   ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+<FooterProvider>
+  <FooterBottom siteTitle="My App" />
+</FooterProvider>
+`,
+      },
+    },
+  },
 };
 
 export const CustomLegalLinks: StoryObj = {
@@ -219,4 +370,23 @@ export const CustomLegalLinks: StoryObj = {
       </div>
     </FooterProvider>
   ),
+  parameters: {
+    docs: {
+      source: {
+        language: 'tsx',
+        code: `
+<FooterProvider linkComponent={NextLink}>
+  <FooterBottom
+    siteTitle="My App"
+    legalLinks={[
+      { name: 'Terms of Service', href: '/tos' },
+      { name: 'Privacy', href: '/privacy' },
+      { name: 'Cookie Policy', href: '/cookies' },
+    ]}
+  />
+</FooterProvider>
+`,
+      },
+    },
+  },
 };
