@@ -135,6 +135,12 @@ const meta: Meta<typeof FullNavbar> = {
   component: FullNavbar,
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      source: {
+        language: 'tsx',
+        type: 'code',
+      },
+    },
   },
   argTypes: {
     showLogo: { control: 'boolean' },

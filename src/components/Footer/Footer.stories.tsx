@@ -112,6 +112,12 @@ const meta: Meta<typeof FullFooter> = {
   component: FullFooter,
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      source: {
+        language: 'tsx',
+        type: 'code',
+      },
+    },
   },
   argTypes: {
     showSocials: { control: 'boolean' },
