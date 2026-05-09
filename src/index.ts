@@ -52,3 +52,34 @@ export {
   // Bottom
   FooterBottom,
 } from './components/Footer';
+
+// Sections — page builder blocks
+export {
+  // Types
+  type SectionButton,
+  type SectionImage,
+  type SectionIcon,
+  type SectionFaqItem,
+  type SectionLink,
+  type SectionCard,
+  type SectionFeatureCard,
+  type SectionsContextValue,
+  type HeroProps,
+  type CTAProps,
+  type FaqAccordionProps,
+  type FeatureCardsIconProps,
+  type ImageLinkCardsProps,
+  type ImageLinkCardProps,
+  type SubscribeNewsletterProps,
+  // Context
+  SectionsProvider,
+  useSections,
+  // Components
+  Hero,
+  CTA,
+  FaqAccordionSection,
+  FeatureCardsIcon,
+  ImageLinkCards,
+  ImageLinkCard,
+  SubscribeNewsletter,
+} from './components/Sections';

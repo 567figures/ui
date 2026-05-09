@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import {
   NavbarProvider,
   NavbarRoot,
@@ -71,6 +72,7 @@ const mockItems: NavbarItem[] = [
     type: 'link',
     name: 'About',
     href: '/about',
+    
   },
 ];
 
@@ -91,6 +93,36 @@ const mockActions: NavbarAction[] = [
   },
 ];
 
+// ── Action-logging link component ─────────────────────────────────────
+
+const onNavigate = action('navigate');
+
+function ActionLink({
+  href,
+  children,
+  onClick,
+  style,
+}: {
+  href: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <a
+      href={href}
+      onClick={(e) => {
+        e.preventDefault();
+        onNavigate(href);
+        onClick?.();
+      }}
+      style={style}
+    >
+      {children}
+    </a>
+  );
+}
+
 // ── Meta ──────────────────────────────────────────────────────────────
 
 const meta: Meta = {
@@ -98,19 +130,44 @@ const meta: Meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  argTypes: {
+    logoText: {
+      control: 'text',
+      description: 'Text displayed in the logo area',
+    },
+    showActions: {
+      control: 'boolean',
+      description: 'Whether to show CTA action buttons',
+    },
+    showMobileMenu: {
+      control: 'boolean',
+      description: 'Whether to include mobile menu',
+    },
+  },
+  args: {
+    logoText: '🎨 567f',
+    showActions: true,
+    showMobileMenu: true,
+  },
 };
 
 export default meta;
 
+type NavbarStoryArgs = {
+  logoText: string;
+  showActions: boolean;
+  showMobileMenu: boolean;
+};
+
 // ── Full composition ──────────────────────────────────────────────────
 
-export const Default: StoryObj = {
-  render: () => (
-    <NavbarProvider>
+export const Default: StoryObj<NavbarStoryArgs> = {
+  render: (args) => (
+    <NavbarProvider linkComponent={ActionLink}>
       <NavbarRoot>
         <NavbarLogo>
           <Text fontSize="$6" fontWeight="bold">
-            🎨 567f
+            {args.logoText}
           </Text>
         </NavbarLogo>
 
@@ -118,23 +175,27 @@ export const Default: StoryObj = {
           <NavbarItems items={mockItems} />
         </NavbarDesktop>
 
-        <NavbarDesktop align="end">
-          <NavbarActions actions={mockActions} />
-        </NavbarDesktop>
+        {args.showActions && (
+          <NavbarDesktop align="end">
+            <NavbarActions actions={mockActions} />
+          </NavbarDesktop>
+        )}
 
-        <NavbarMobileMenu>
-          <NavbarMobileItems items={mockItems} />
-          <NavbarActions actions={mockActions} />
-        </NavbarMobileMenu>
+        {args.showMobileMenu && (
+          <NavbarMobileMenu>
+            <NavbarMobileItems items={mockItems} />
+            {args.showActions && <NavbarActions actions={mockActions} />}
+          </NavbarMobileMenu>
+        )}
       </NavbarRoot>
     </NavbarProvider>
   ),
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-import {
+        code: `import {
   NavbarProvider,
   NavbarRoot,
   NavbarDesktop,
@@ -147,7 +208,7 @@ import {
 
 export function Navbar({ items, actions, logo }) {
   return (
-    <NavbarProvider renderIcon={(icon) => <MyIcon icon={icon} />}>
+    <NavbarProvider linkComponent={NextLink}>
       <NavbarRoot>
         <NavbarLogo>
           <img src={logo} alt="Logo" />
@@ -168,20 +229,22 @@ export function Navbar({ items, actions, logo }) {
       </NavbarRoot>
     </NavbarProvider>
   );
-}
-`,
+}`,
       },
     },
   },
 };
 
-export const NoActions: StoryObj = {
-  render: () => (
-    <NavbarProvider>
+export const NoActions: StoryObj<NavbarStoryArgs> = {
+  args: {
+    showActions: false,
+  },
+  render: (args) => (
+    <NavbarProvider linkComponent={ActionLink}>
       <NavbarRoot>
         <NavbarLogo>
           <Text fontSize="$6" fontWeight="bold">
-            🎨 567f
+            {args.logoText}
           </Text>
         </NavbarLogo>
 
@@ -189,18 +252,20 @@ export const NoActions: StoryObj = {
           <NavbarItems items={mockItems} />
         </NavbarDesktop>
 
-        <NavbarMobileMenu>
-          <NavbarMobileItems items={mockItems} />
-        </NavbarMobileMenu>
+        {args.showMobileMenu && (
+          <NavbarMobileMenu>
+            <NavbarMobileItems items={mockItems} />
+          </NavbarMobileMenu>
+        )}
       </NavbarRoot>
     </NavbarProvider>
   ),
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-<NavbarProvider>
+        code: `<NavbarProvider>
   <NavbarRoot>
     <NavbarLogo>
       <img src={logo} alt="Logo" />
@@ -214,20 +279,19 @@ export const NoActions: StoryObj = {
       <NavbarMobileItems items={items} />
     </NavbarMobileMenu>
   </NavbarRoot>
-</NavbarProvider>
-`,
+</NavbarProvider>`,
       },
     },
   },
 };
 
-export const LinksOnly: StoryObj = {
-  render: () => (
-    <NavbarProvider>
+export const LinksOnly: StoryObj<NavbarStoryArgs> = {
+  render: (args) => (
+    <NavbarProvider linkComponent={ActionLink}>
       <NavbarRoot>
         <NavbarLogo>
           <Text fontSize="$6" fontWeight="bold">
-            🎨 567f
+            {args.logoText}
           </Text>
         </NavbarLogo>
 
@@ -235,23 +299,27 @@ export const LinksOnly: StoryObj = {
           <NavbarItems items={mockItems.filter((i) => i.type === 'link')} />
         </NavbarDesktop>
 
-        <NavbarDesktop align="end">
-          <NavbarActions actions={mockActions} />
-        </NavbarDesktop>
+        {args.showActions && (
+          <NavbarDesktop align="end">
+            <NavbarActions actions={mockActions} />
+          </NavbarDesktop>
+        )}
 
-        <NavbarMobileMenu>
-          <NavbarMobileItems items={mockItems.filter((i) => i.type === 'link')} />
-          <NavbarActions actions={mockActions} />
-        </NavbarMobileMenu>
+        {args.showMobileMenu && (
+          <NavbarMobileMenu>
+            <NavbarMobileItems items={mockItems.filter((i) => i.type === 'link')} />
+            {args.showActions && <NavbarActions actions={mockActions} />}
+          </NavbarMobileMenu>
+        )}
       </NavbarRoot>
     </NavbarProvider>
   ),
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-// Only simple links, no dropdown columns
+        code: `// Only simple links, no dropdown columns
 <NavbarProvider>
   <NavbarRoot>
     <NavbarLogo>...</NavbarLogo>
@@ -269,20 +337,23 @@ export const LinksOnly: StoryObj = {
       <NavbarActions actions={actions} />
     </NavbarMobileMenu>
   </NavbarRoot>
-</NavbarProvider>
-`,
+</NavbarProvider>`,
       },
     },
   },
 };
 
-export const Minimal: StoryObj = {
-  render: () => (
-    <NavbarProvider>
+export const Minimal: StoryObj<NavbarStoryArgs> = {
+  args: {
+    showActions: false,
+    showMobileMenu: false,
+  },
+  render: (args) => (
+    <NavbarProvider linkComponent={ActionLink}>
       <NavbarRoot>
         <NavbarLogo>
           <Text fontSize="$6" fontWeight="bold">
-            🎨 567f
+            {args.logoText}
           </Text>
         </NavbarLogo>
 
@@ -300,9 +371,9 @@ export const Minimal: StoryObj = {
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-// Minimal navbar — just logo and a couple links
+        code: `// Minimal navbar — just logo and a couple links
 <NavbarProvider>
   <NavbarRoot>
     <NavbarLogo>
@@ -316,8 +387,7 @@ export const Minimal: StoryObj = {
       ]} />
     </NavbarDesktop>
   </NavbarRoot>
-</NavbarProvider>
-`,
+</NavbarProvider>`,
       },
     },
   },
@@ -327,7 +397,7 @@ export const Minimal: StoryObj = {
 
 export const JustDropdown: StoryObj = {
   render: () => (
-    <NavbarProvider>
+    <NavbarProvider linkComponent={ActionLink}>
       <div style={{ padding: 40 }}>
         <NavbarItems items={[mockItems[0]]} />
       </div>
@@ -336,9 +406,9 @@ export const JustDropdown: StoryObj = {
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-<NavbarProvider>
+        code: `<NavbarProvider>
   <NavbarItems items={[{
     _key: '1',
     type: 'column',
@@ -348,8 +418,7 @@ export const JustDropdown: StoryObj = {
       { _key: '1b', name: 'Automation', description: '...', href: '/automation' },
     ],
   }]} />
-</NavbarProvider>
-`,
+</NavbarProvider>`,
       },
     },
   },
@@ -357,7 +426,7 @@ export const JustDropdown: StoryObj = {
 
 export const JustActions: StoryObj = {
   render: () => (
-    <NavbarProvider>
+    <NavbarProvider linkComponent={ActionLink}>
       <div style={{ padding: 40, display: 'flex', gap: 12 }}>
         <NavbarActions actions={mockActions} />
       </div>
@@ -366,15 +435,14 @@ export const JustActions: StoryObj = {
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-<NavbarProvider>
+        code: `<NavbarProvider>
   <NavbarActions actions={[
     { _key: 'a1', type: 'anchor', text: 'Sign In', href: '/login' },
     { _key: 'a2', type: 'button', text: 'Get Started', href: '/signup', variant: 'outlined', theme: 'active' },
   ]} />
-</NavbarProvider>
-`,
+</NavbarProvider>`,
       },
     },
   },
@@ -382,7 +450,7 @@ export const JustActions: StoryObj = {
 
 export const MobileAccordion: StoryObj = {
   render: () => (
-    <NavbarProvider>
+    <NavbarProvider linkComponent={ActionLink}>
       <div style={{ maxWidth: 375, padding: 16 }}>
         <NavbarMobileItems items={mockItems} />
       </div>
@@ -391,12 +459,11 @@ export const MobileAccordion: StoryObj = {
   parameters: {
     docs: {
       source: {
+        type: 'code',
         language: 'tsx',
-        code: `
-<NavbarProvider>
+        code: `<NavbarProvider>
   <NavbarMobileItems items={items} />
-</NavbarProvider>
-`,
+</NavbarProvider>`,
       },
     },
   },
