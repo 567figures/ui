@@ -7,20 +7,26 @@ export type {
   FooterLegalLink,
 } from './types';
 
-// Context — wrap your footer to provide custom Link component and social icon renderer
-export { FooterProvider, useFooter } from './FooterContext';
+// Context
+export { useFooter } from './FooterContext';
 
-// Layout — structural pieces
-export { FooterRoot, FooterContent, FooterBrand } from './FooterLayout';
+// ── Compound component ────────────────────────────────────────────────
 
-// Brand — logo and subtitle
-export { FooterLogo, FooterSubtitle } from './FooterLogo';
+import { FooterProvider } from './FooterContext';
+import { FooterRoot, FooterContent, FooterBrand } from './FooterLayout';
+import { FooterLogo, FooterSubtitle } from './FooterLogo';
+import { FooterSocials } from './FooterSocials';
+import { FooterColumns } from './FooterColumns';
+import { FooterBottom } from './FooterBottom';
 
-// Social — social media icons
-export { FooterSocials } from './FooterSocials';
-
-// Content — navigation columns
-export { FooterColumns } from './FooterColumns';
-
-// Bottom — copyright and legal links
-export { FooterBottom } from './FooterBottom';
+export const Footer = {
+  Provider: FooterProvider,
+  Root: FooterRoot,
+  Content: FooterContent,
+  Brand: FooterBrand,
+  Logo: FooterLogo,
+  Subtitle: FooterSubtitle,
+  Socials: FooterSocials,
+  Columns: FooterColumns,
+  Bottom: FooterBottom,
+} as const;

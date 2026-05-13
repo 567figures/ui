@@ -14,8 +14,8 @@ export { SectionsProvider, useSections } from './SectionsContext';
 export type { SectionsContextValue } from './SectionsContext';
 
 // Sections
-export { Hero } from './Hero';
-export type { HeroProps } from './Hero';
+export { Hero, HeroRoot, HeroContent, HeroBadge, HeroTitle, HeroDescription, HeroActions, HeroMedia } from './Hero';
+export type { HeroRootProps, HeroContentProps, HeroBadgeProps, HeroTitleProps, HeroDescriptionProps, HeroActionsProps, HeroMediaProps } from './Hero';
 
 export { CTA } from './CTA';
 export type { CTAProps } from './CTA';

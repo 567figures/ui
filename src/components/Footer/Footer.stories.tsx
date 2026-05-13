@@ -1,17 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import {
-  FooterProvider,
-  FooterRoot,
-  FooterContent,
-  FooterBrand,
-  FooterLogo,
-  FooterSubtitle,
-  FooterSocials,
-  FooterColumns,
-  FooterBottom,
-} from './index';
+import { Footer } from './index';
 import type { FooterColumn, FooterSocialLinks } from './types';
 import { Text } from 'tamagui';
 
@@ -161,61 +151,51 @@ type FooterStoryArgs = {
 
 export const Default: StoryObj<FooterStoryArgs> = {
   render: (args) => (
-    <FooterProvider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
-      <FooterRoot>
-        <FooterContent>
-          <FooterBrand>
-            <FooterLogo>
+    <Footer.Provider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
+      <Footer.Root>
+        <Footer.Content>
+          <Footer.Brand>
+            <Footer.Logo>
               <Text fontSize="$6" fontWeight="bold">
                 {args.logoText}
               </Text>
-            </FooterLogo>
-            <FooterSubtitle text={args.subtitle} />
-            {args.showSocials && <FooterSocials socialLinks={mockSocialLinks} />}
-          </FooterBrand>
-          {args.showColumns && <FooterColumns columns={mockColumns} />}
-        </FooterContent>
-        <FooterBottom siteTitle={args.siteTitle} />
-      </FooterRoot>
-    </FooterProvider>
+            </Footer.Logo>
+            <Footer.Subtitle text={args.subtitle} />
+            {args.showSocials && <Footer.Socials socialLinks={mockSocialLinks} />}
+          </Footer.Brand>
+          {args.showColumns && <Footer.Columns columns={mockColumns} />}
+        </Footer.Content>
+        <Footer.Bottom siteTitle={args.siteTitle} />
+      </Footer.Root>
+    </Footer.Provider>
   ),
   parameters: {
     docs: {
       source: {
         type: 'code',
         language: 'tsx',
-        code: `import {
-  FooterProvider,
-  FooterRoot,
-  FooterContent,
-  FooterBrand,
-  FooterLogo,
-  FooterSubtitle,
-  FooterSocials,
-  FooterColumns,
-  FooterBottom,
-} from '@567f/ui';
+        code: `import { Footer } from '@567f/ui';
 
-export function Footer({ columns, socialLinks, subtitle, siteTitle, logo }) {
+export function MyFooter({ columns, socialLinks, subtitle, siteTitle, logo }) {
   return (
-    <FooterProvider
+    <Footer.Provider
       linkComponent={NextLink}
       renderSocialIcon={(platform) => <SocialIcon platform={platform} />}
     >
-      <FooterRoot>
-        <FooterContent>
-          <FooterBrand>
-            <FooterLogo>
+      <Footer.Root>
+        <Footer.Content>
+          <Footer.Brand>
+            <Footer.Logo>
               <img src={logo} alt={siteTitle} />
-            </FooterLogo>
-            <FooterSubtitle text={subtitle} />
-            <FooterSocials socialLinks={socialLinks} />
-          </FooterBrand>
-          <FooterColumns columns={columns} />
-        </FooterContent>
-        <FooterBottom siteTitle={siteTitle} />
-      </FooterRoot>
-    </FooterProvider>
+            </Footer.Logo>
+            <Footer.Subtitle text={subtitle} />
+            <Footer.Socials socialLinks={socialLinks} />
+          </Footer.Brand>
+          <Footer.Columns columns={columns} />
+        </Footer.Content>
+        <Footer.Bottom siteTitle={siteTitle} />
+      </Footer.Root>
+    </Footer.Provider>
   );
 }`,
       },
@@ -228,44 +208,23 @@ export const NoSocials: StoryObj<FooterStoryArgs> = {
     showSocials: false,
   },
   render: (args) => (
-    <FooterProvider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
-      <FooterRoot>
-        <FooterContent>
-          <FooterBrand>
-            <FooterLogo>
+    <Footer.Provider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
+      <Footer.Root>
+        <Footer.Content>
+          <Footer.Brand>
+            <Footer.Logo>
               <Text fontSize="$6" fontWeight="bold">
                 {args.logoText}
               </Text>
-            </FooterLogo>
-            <FooterSubtitle text={args.subtitle} />
-          </FooterBrand>
-          {args.showColumns && <FooterColumns columns={mockColumns} />}
-        </FooterContent>
-        <FooterBottom siteTitle={args.siteTitle} />
-      </FooterRoot>
-    </FooterProvider>
+            </Footer.Logo>
+            <Footer.Subtitle text={args.subtitle} />
+          </Footer.Brand>
+          {args.showColumns && <Footer.Columns columns={mockColumns} />}
+        </Footer.Content>
+        <Footer.Bottom siteTitle={args.siteTitle} />
+      </Footer.Root>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `// Without social icons
-<FooterProvider>
-  <FooterRoot>
-    <FooterContent>
-      <FooterBrand>
-        <FooterLogo>...</FooterLogo>
-        <FooterSubtitle text={subtitle} />
-      </FooterBrand>
-      <FooterColumns columns={columns} />
-    </FooterContent>
-    <FooterBottom siteTitle={siteTitle} />
-  </FooterRoot>
-</FooterProvider>`,
-      },
-    },
-  },
 };
 
 export const NoColumns: StoryObj<FooterStoryArgs> = {
@@ -273,44 +232,23 @@ export const NoColumns: StoryObj<FooterStoryArgs> = {
     showColumns: false,
   },
   render: (args) => (
-    <FooterProvider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
-      <FooterRoot>
-        <FooterContent>
-          <FooterBrand>
-            <FooterLogo>
+    <Footer.Provider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
+      <Footer.Root>
+        <Footer.Content>
+          <Footer.Brand>
+            <Footer.Logo>
               <Text fontSize="$6" fontWeight="bold">
                 {args.logoText}
               </Text>
-            </FooterLogo>
-            <FooterSubtitle text={args.subtitle} />
-            {args.showSocials && <FooterSocials socialLinks={mockSocialLinks} />}
-          </FooterBrand>
-        </FooterContent>
-        <FooterBottom siteTitle={args.siteTitle} />
-      </FooterRoot>
-    </FooterProvider>
+            </Footer.Logo>
+            <Footer.Subtitle text={args.subtitle} />
+            {args.showSocials && <Footer.Socials socialLinks={mockSocialLinks} />}
+          </Footer.Brand>
+        </Footer.Content>
+        <Footer.Bottom siteTitle={args.siteTitle} />
+      </Footer.Root>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `// Without navigation columns — just brand + bottom
-<FooterProvider renderSocialIcon={renderSocialIcon}>
-  <FooterRoot>
-    <FooterContent>
-      <FooterBrand>
-        <FooterLogo>...</FooterLogo>
-        <FooterSubtitle text={subtitle} />
-        <FooterSocials socialLinks={socialLinks} />
-      </FooterBrand>
-    </FooterContent>
-    <FooterBottom siteTitle={siteTitle} />
-  </FooterRoot>
-</FooterProvider>`,
-      },
-    },
-  },
 };
 
 export const Minimal: StoryObj<FooterStoryArgs> = {
@@ -320,100 +258,44 @@ export const Minimal: StoryObj<FooterStoryArgs> = {
     subtitle: '',
   },
   render: (args) => (
-    <FooterProvider linkComponent={ActionLink}>
-      <FooterRoot>
-        <FooterContent>
-          <FooterBrand>
-            <FooterLogo>
+    <Footer.Provider linkComponent={ActionLink}>
+      <Footer.Root>
+        <Footer.Content>
+          <Footer.Brand>
+            <Footer.Logo>
               <Text fontSize="$6" fontWeight="bold">
                 {args.logoText}
               </Text>
-            </FooterLogo>
-            {args.subtitle && <FooterSubtitle text={args.subtitle} />}
-          </FooterBrand>
-        </FooterContent>
-        <FooterBottom siteTitle={args.siteTitle} />
-      </FooterRoot>
-    </FooterProvider>
+            </Footer.Logo>
+            {args.subtitle && <Footer.Subtitle text={args.subtitle} />}
+          </Footer.Brand>
+        </Footer.Content>
+        <Footer.Bottom siteTitle={args.siteTitle} />
+      </Footer.Root>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `// Minimal footer — just logo and copyright
-<FooterProvider>
-  <FooterRoot>
-    <FooterContent>
-      <FooterBrand>
-        <FooterLogo>
-          <img src="/logo.svg" alt="Logo" />
-        </FooterLogo>
-      </FooterBrand>
-    </FooterContent>
-    <FooterBottom siteTitle="My App" />
-  </FooterRoot>
-</FooterProvider>`,
-      },
-    },
-  },
 };
 
 // ── Individual component stories ──────────────────────────────────────
 
 export const JustColumns: StoryObj = {
   render: () => (
-    <FooterProvider linkComponent={ActionLink}>
+    <Footer.Provider linkComponent={ActionLink}>
       <div style={{ padding: 40 }}>
-        <FooterColumns columns={mockColumns} />
+        <Footer.Columns columns={mockColumns} />
       </div>
-    </FooterProvider>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `<FooterProvider linkComponent={MyLink}>
-  <FooterColumns columns={[
-    {
-      _key: '1',
-      title: 'Product',
-      links: [
-        { _key: '1a', name: 'Features', href: '/features' },
-        { _key: '1b', name: 'Pricing', href: '/pricing' },
-      ],
-    },
-  ]} />
-</FooterProvider>`,
-      },
-    },
-  },
 };
 
 export const JustSocials: StoryObj = {
   render: () => (
-    <FooterProvider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
+    <Footer.Provider linkComponent={ActionLink} renderSocialIcon={renderSocialIcon}>
       <div style={{ padding: 40 }}>
-        <FooterSocials socialLinks={mockSocialLinks} />
+        <Footer.Socials socialLinks={mockSocialLinks} />
       </div>
-    </FooterProvider>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `<FooterProvider renderSocialIcon={(platform) => <SocialIcon platform={platform} />}>
-  <FooterSocials socialLinks={{
-    instagram: 'https://instagram.com/...',
-    facebook: 'https://facebook.com/...',
-    twitter: 'https://twitter.com/...',
-  }} />
-</FooterProvider>`,
-      },
-    },
-  },
 };
 
 export const JustBottom: StoryObj<{ siteTitle: string }> = {
@@ -424,23 +306,12 @@ export const JustBottom: StoryObj<{ siteTitle: string }> = {
     siteTitle: { control: 'text' },
   },
   render: (args) => (
-    <FooterProvider linkComponent={ActionLink}>
+    <Footer.Provider linkComponent={ActionLink}>
       <div style={{ padding: 40 }}>
-        <FooterBottom siteTitle={args.siteTitle} />
+        <Footer.Bottom siteTitle={args.siteTitle} />
       </div>
-    </FooterProvider>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `<FooterProvider>
-  <FooterBottom siteTitle="My App" />
-</FooterProvider>`,
-      },
-    },
-  },
 };
 
 export const CustomLegalLinks: StoryObj<{ siteTitle: string }> = {
@@ -451,9 +322,9 @@ export const CustomLegalLinks: StoryObj<{ siteTitle: string }> = {
     siteTitle: { control: 'text' },
   },
   render: (args) => (
-    <FooterProvider linkComponent={ActionLink}>
+    <Footer.Provider linkComponent={ActionLink}>
       <div style={{ padding: 40 }}>
-        <FooterBottom
+        <Footer.Bottom
           siteTitle={args.siteTitle}
           legalLinks={[
             { name: 'Terms of Service', href: '/tos' },
@@ -462,24 +333,6 @@ export const CustomLegalLinks: StoryObj<{ siteTitle: string }> = {
           ]}
         />
       </div>
-    </FooterProvider>
+    </Footer.Provider>
   ),
-  parameters: {
-    docs: {
-      source: {
-        type: 'code',
-        language: 'tsx',
-        code: `<FooterProvider linkComponent={NextLink}>
-  <FooterBottom
-    siteTitle="My App"
-    legalLinks={[
-      { name: 'Terms of Service', href: '/tos' },
-      { name: 'Privacy', href: '/privacy' },
-      { name: 'Cookie Policy', href: '/cookies' },
-    ]}
-  />
-</FooterProvider>`,
-      },
-    },
-  },
 };

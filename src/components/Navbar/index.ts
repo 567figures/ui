@@ -1,25 +1,36 @@
 // Types
 export type {
-  NavbarLink as NavbarLinkData,
+  NavbarLink,
   NavbarColumnItem,
   NavbarLinkItem,
   NavbarItem,
   NavbarAction,
 } from './types';
 
-// Context — wrap your navbar to provide custom Link component and icon renderer
-export { NavbarProvider, useNavbar } from './NavbarContext';
+// Context
+export { useNavbar } from './NavbarContext';
 
-// Layout — structural pieces
-export { NavbarRoot, NavbarDesktop } from './NavbarLayout';
-export { NavbarLogo } from './NavbarLogo';
+// ── Compound component ────────────────────────────────────────────────
 
-// Content — navigation items
-export { NavbarItems } from './NavbarItems';
-export { NavbarDropdown } from './NavbarDropdown';
-export { NavbarLink } from './NavbarLink';
-export { NavbarActions } from './NavbarActions';
+import { NavbarProvider } from './NavbarContext';
+import { NavbarRoot, NavbarDesktop } from './NavbarLayout';
+import { NavbarLogo } from './NavbarLogo';
+import { NavbarItems } from './NavbarItems';
+import { NavbarDropdown } from './NavbarDropdown';
+import { NavbarLink } from './NavbarLink';
+import { NavbarActions } from './NavbarActions';
+import { NavbarMobileMenu } from './NavbarMobileMenu';
+import { NavbarMobileItems } from './NavbarMobileItems';
 
-// Mobile
-export { NavbarMobileMenu } from './NavbarMobileMenu';
-export { NavbarMobileItems } from './NavbarMobileItems';
+export const Navbar = {
+  Provider: NavbarProvider,
+  Root: NavbarRoot,
+  Desktop: NavbarDesktop,
+  Logo: NavbarLogo,
+  Items: NavbarItems,
+  Dropdown: NavbarDropdown,
+  Link: NavbarLink,
+  Actions: NavbarActions,
+  MobileMenu: NavbarMobileMenu,
+  MobileItems: NavbarMobileItems,
+} as const;
