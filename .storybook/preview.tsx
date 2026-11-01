@@ -1,16 +1,13 @@
 import React from 'react';
 import type { Preview } from '@storybook/react';
-import { TamaguiProvider, createTamagui } from 'tamagui';
-import { defaultConfig } from '@tamagui/config/v4';
-
-const tamaguiConfig = createTamagui(defaultConfig);
+import { UiProvider } from '../src/UiProvider';
 
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
+      <UiProvider defaultTheme="light">
         <Story />
-      </TamaguiProvider>
+      </UiProvider>
     ),
   ],
   parameters: {

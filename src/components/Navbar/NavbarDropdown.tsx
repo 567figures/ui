@@ -1,79 +1,125 @@
-import React from 'react';
-import { Text, XStack, YStack, Popover, Button } from 'tamagui';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
+import { Popover, XStack } from 'tamagui';
 import { useNavbar } from './NavbarContext';
-import type { NavbarColumnItem, NavbarLink } from './types';
 
-// ── Single menu item inside a popover dropdown ───────────────────────
+// ── Dropdown sub-context ──────────────────────────────────────────────
 
-function PopoverMenuItem({ link }: { link: NavbarLink }) {
-  const { LinkComponent, renderIcon } = useNavbar();
-
-  return (
-    <LinkComponent
-      href={link.href ?? '/'}
-      style={{ textDecoration: 'none' }}
-    >
-      <XStack alignItems="center" padding="$3" gap="$1">
-        <YStack>{renderIcon && link.icon ? renderIcon(link.icon) : link.icon}</YStack>
-        <YStack width="100%">
-          <Text fontSize="$3" fontWeight="bold">
-            {link.name}
-          </Text>
-          <Text fontSize="$2" color="$accent10" numberOfLines={2}>
-            {link.description}
-          </Text>
-        </YStack>
-      </XStack>
-    </LinkComponent>
-  );
+interface DropdownItemEntry {
+  id: string;
+  node: React.ReactNode;
 }
 
-function getColumnWidth(count: number) {
-  if (count <= 4) return '100%';
-  if (count <= 8) return '50%';
-  return '33.33%';
+export interface DropdownCtx {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  registerItem: (entry: DropdownItemEntry) => () => void;
+  setTriggerLabel: (label: React.ReactNode) => void;
+  items: DropdownItemEntry[];
 }
 
-// ── Desktop dropdown for a column with links ─────────────────────────
+export const DropdownContext = createContext<DropdownCtx | null>(null);
+
+export function useDropdownContext() {
+  const ctx = useContext(DropdownContext);
+  if (!ctx) {
+    throw new Error(
+      'Navbar.DropdownTrigger / Navbar.DropdownContent / Navbar.DropdownItem must be used within <Navbar.Dropdown>'
+    );
+  }
+  return ctx;
+}
 
 /**
- * A dropdown menu triggered by a button. Shows a popover with links.
+ * Dropdown wrapper. Provides open state and collects DropdownItems for mobile registration.
+ * Supports optional hover-triggered opening with configurable delays.
  *
  * @example
- * <NavbarDropdown column={columnData} />
+ * <Navbar.Dropdown openOnHover>
+ *   <Navbar.DropdownTrigger><Button chromeless>Products</Button></Navbar.DropdownTrigger>
+ *   <Navbar.DropdownContent>
+ *     <Navbar.DropdownItem>...</Navbar.DropdownItem>
+ *   </Navbar.DropdownContent>
+ * </Navbar.Dropdown>
  */
-export function NavbarDropdown({ column }: { column: NavbarColumnItem }) {
-  const columnWidth = getColumnWidth(column.links?.length ?? 0);
+export function NavbarDropdown({
+  children,
+  openOnHover = false,
+}: {
+  children: React.ReactNode;
+  /** Open dropdown on mouse hover (150ms open / 300ms close delay). Default: false */
+  openOnHover?: boolean;
+}) {
+  const id = useId();
+  const { registerDropdown, getOrderNumber } = useNavbar();
+
+  // Capture order during first render to preserve DOM order
+  const orderRef = useRef<number | null>(null);
+  if (orderRef.current === null) {
+    orderRef.current = getOrderNumber(id);
+  }
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState<DropdownItemEntry[]>([]);
+  const triggerLabelRef = useRef<React.ReactNode>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const registerItem = useCallback((entry: DropdownItemEntry) => {
+    setItems((prev) => [...prev, entry]);
+    return () => {
+      setItems((prev) => prev.filter((i) => i.id !== entry.id));
+    };
+  }, []);
+
+  const setTriggerLabel = useCallback((label: React.ReactNode) => {
+    triggerLabelRef.current = label;
+  }, []);
+
+  useEffect(() => {
+    const unregister = registerDropdown({
+      id,
+      trigger: triggerLabelRef.current,
+      items: items.map((i) => i.node),
+    });
+    return unregister;
+  }, [id, items, registerDropdown]);
+
+  const handleMouseEnter = useCallback(() => {
+    if (!openOnHover) return;
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(true), 150);
+  }, [openOnHover]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!openOnHover) return;
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => setOpen(false), 300);
+  }, [openOnHover]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
+  const ctx: DropdownCtx = { open, setOpen, registerItem, setTriggerLabel, items };
 
   return (
-    <Popover placement="bottom" size="$5">
-      <Popover.Trigger asChild>
-        <Button variant="outlined">
-          <Text fontSize="$4">{column.title}</Text>
-        </Button>
-      </Popover.Trigger>
-      <Popover.Content
-        borderWidth={1}
-        borderColor="$borderColor"
-        enterStyle={{ y: -10, opacity: 0 }}
-        exitStyle={{ y: -10, opacity: 0 }}
-        elevate
-        animation={['quick', { opacity: { overshootClamping: true } }]}
-      >
-        <Popover.Arrow borderWidth={1} borderColor="$borderColor" />
-        <XStack flexWrap="wrap" justifyContent="flex-start">
-          {column.links?.map((link) => (
-            <YStack
-              key={link._key}
-              flexBasis={columnWidth as any}
-              flexGrow={1}
-              flexShrink={0}
-            >
-              <PopoverMenuItem link={link} />
-            </YStack>
-          ))}
+    <DropdownContext.Provider value={ctx}>
+      <Popover placement="bottom" open={open} onOpenChange={setOpen}>
+        <XStack
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {children}
         </XStack>
-      </Popover.Content>
-    </Popover>
+      </Popover>
+    </DropdownContext.Provider>
   );
 }

@@ -1,13 +1,45 @@
-// ── Navbar ─────────────────────────────────────────────────────────────
+// ── Defaults (ADR-0002 / template ADR-0004) ───────────────────────────
 
-export { Navbar } from './components/Navbar';
+export { default as tamaguiConfig } from './tamagui.config';
+export * from './themes';
+export { UiProvider, UIProvider, type UiProviderProps } from './UiProvider';
+export { useToastController } from '@tamagui/toast';
+export { Chip } from './components/Chip';
+export { CurrentToast } from './components/CurrentToast';
+export * from './components/DropdownMenu';
+
+// Parity with former `@/ui` barrel (web-oriented re-exports)
+export {
+  Button,
+  XStack,
+  YStack,
+  H1,
+  H2,
+  H3,
+  H4,
+  H5,
+  H6,
+  Text,
+  Paragraph,
+} from 'tamagui/web';
+
+// ── Drawer ────────────────────────────────────────────────────────────
+
+export { Drawer, useDrawer } from './components/Drawer';
 
 export type {
-  NavbarLink as NavbarLinkData,
-  NavbarColumnItem,
-  NavbarLinkItem,
-  NavbarItem,
-  NavbarAction,
+  DrawerContextValue,
+  DrawerPlacement,
+  DrawerSize,
+} from './components/Drawer';
+
+// ── Navbar ─────────────────────────────────────────────────────────────
+
+export { Navbar, useNavbar } from './components/Navbar';
+
+export type {
+  RegisteredNavItem,
+  RegisteredDropdown,
 } from './components/Navbar';
 
 // ── Footer ────────────────────────────────────────────────────────────

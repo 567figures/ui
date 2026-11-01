@@ -1,34 +1,19 @@
-// ── Data types (no framework dependency) ──────────────────────────────
+import type React from 'react';
 
-export interface NavbarLink {
-  _key: string;
-  name?: string | null;
-  description?: string | null;
-  href?: string | null;
-  icon?: React.ReactNode;
+// ── Mobile registration types ─────────────────────────────────────────
+
+export interface RegisteredNavItem {
+  id: string;
+  node: React.ReactNode;
 }
 
-export interface NavbarColumnItem {
-  _key: string;
-  type: 'column';
-  title?: string | null;
-  links?: NavbarLink[] | null;
+export interface RegisteredDropdown {
+  id: string;
+  trigger: React.ReactNode;
+  items: React.ReactNode[];
 }
 
-export interface NavbarLinkItem {
-  _key: string;
-  type: 'link';
-  name?: string | null;
-  href?: string | null;
-}
-
-export type NavbarItem = NavbarColumnItem | NavbarLinkItem;
-
-export interface NavbarAction {
-  _key: string;
-  type?: string | null;
-  text?: string | null;
-  href?: string | null;
-  variant?: string | null;
-  theme?: string | null;
-}
+/** Union type for ordered mobile entries */
+export type RegisteredMobileEntry =
+  | { type: 'item'; data: RegisteredNavItem; order: number }
+  | { type: 'dropdown'; data: RegisteredDropdown; order: number };

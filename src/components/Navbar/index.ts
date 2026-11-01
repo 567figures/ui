@@ -1,36 +1,32 @@
-// Types
-export type {
-  NavbarLink,
-  NavbarColumnItem,
-  NavbarLinkItem,
-  NavbarItem,
-  NavbarAction,
-} from './types';
+// ── Types ─────────────────────────────────────────────────────────────
+export type { RegisteredNavItem, RegisteredDropdown } from './types';
+export type { ResponsiveColumns } from '../../utils/buildResponsiveColumns';
 
-// Context
-export { useNavbar } from './NavbarContext';
+// ── Context ──────────────────────────────────────────────────────────
+export { useNavbar, useMobileEntries } from './NavbarContext';
 
 // ── Compound component ────────────────────────────────────────────────
 
-import { NavbarProvider } from './NavbarContext';
-import { NavbarRoot, NavbarDesktop } from './NavbarLayout';
-import { NavbarLogo } from './NavbarLogo';
-import { NavbarItems } from './NavbarItems';
+import { NavbarRoot } from './NavbarRoot';
+import { NavbarGlobalBar } from './NavbarGlobalBar';
+import { NavbarAppBar } from './NavbarAppBar';
+import { NavbarAppBarItem } from './NavbarAppBarItem';
+import { NavbarItem } from './NavbarItem';
 import { NavbarDropdown } from './NavbarDropdown';
-import { NavbarLink } from './NavbarLink';
-import { NavbarActions } from './NavbarActions';
-import { NavbarMobileMenu } from './NavbarMobileMenu';
-import { NavbarMobileItems } from './NavbarMobileItems';
+import { NavbarDropdownTrigger } from './NavbarDropdownTrigger';
+import { NavbarDropdownContent } from './NavbarDropdownContent';
+import { NavbarDropdownItem } from './NavbarDropdownItem';
+import { NavbarMobileToggle } from './NavbarMobileToggle';
 
 export const Navbar = {
-  Provider: NavbarProvider,
   Root: NavbarRoot,
-  Desktop: NavbarDesktop,
-  Logo: NavbarLogo,
-  Items: NavbarItems,
+  GlobalBar: NavbarGlobalBar,
+  AppBar: NavbarAppBar,
+  AppBarItem: NavbarAppBarItem,
+  Item: NavbarItem,
   Dropdown: NavbarDropdown,
-  Link: NavbarLink,
-  Actions: NavbarActions,
-  MobileMenu: NavbarMobileMenu,
-  MobileItems: NavbarMobileItems,
+  DropdownTrigger: NavbarDropdownTrigger,
+  DropdownContent: NavbarDropdownContent,
+  DropdownItem: NavbarDropdownItem,
+  MobileToggle: NavbarMobileToggle,
 } as const;
