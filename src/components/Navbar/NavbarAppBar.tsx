@@ -2,6 +2,25 @@ import React from 'react';
 import { styled, XStack, YStack } from 'tamagui';
 import type { GetProps } from 'tamagui';
 
+// ── Density tokens (runtime props — styled variants alone do not emit CSS) ─
+
+type Density = 'compact' | 'default' | 'spacious';
+
+const CONTAINER_PAD: Record<
+  Density,
+  { paddingHorizontal: '$3' | '$4' | '$6'; paddingVertical: '$2' | '$3' | '$4' }
+> = {
+  compact: { paddingHorizontal: '$3', paddingVertical: '$2' },
+  default: { paddingHorizontal: '$4', paddingVertical: '$3' },
+  spacious: { paddingHorizontal: '$6', paddingVertical: '$4' },
+};
+
+const INNER_GAP: Record<Density, '$2' | '$4' | '$6'> = {
+  compact: '$2',
+  default: '$4',
+  spacious: '$6',
+};
+
 // ── Styled Frames ─────────────────────────────────────────────────────
 
 /** Outer wrapper — handles sticky, border, background */
@@ -20,6 +39,8 @@ export const AppBarContainer = styled(YStack, {
   alignSelf: 'center',
   width: '100%',
   maxWidth: 1280,
+  paddingHorizontal: '$4',
+  paddingVertical: '$3',
 
   variants: {
     density: {
@@ -49,6 +70,7 @@ export const AppBarInner = styled(XStack, {
   alignItems: 'center',
   justifyContent: 'space-between',
   width: '100%',
+  gap: '$4',
 
   variants: {
     density: {
@@ -64,8 +86,6 @@ export const AppBarInner = styled(XStack, {
 });
 
 // ── Component ─────────────────────────────────────────────────────────
-
-type Density = 'compact' | 'default' | 'spacious';
 
 /**
  * Main navigation bar.
@@ -94,6 +114,8 @@ export function NavbarAppBar({
   /** Override max content width. Default: 1280 */
   maxWidth?: number;
 } & Omit<GetProps<typeof AppBarFrame>, 'children'>) {
+  const pad = CONTAINER_PAD[density];
+
   return (
     <AppBarFrame
       {...rest}
@@ -108,9 +130,11 @@ export function NavbarAppBar({
         tag="nav"
         aria-label="Main navigation"
         density={density}
+        paddingHorizontal={pad.paddingHorizontal}
+        paddingVertical={pad.paddingVertical}
         {...(maxWidth != null && { maxWidth })}
       >
-        <AppBarInner density={density}>
+        <AppBarInner density={density} gap={INNER_GAP[density]}>
           {children}
         </AppBarInner>
       </AppBarContainer>

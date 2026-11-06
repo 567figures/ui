@@ -1,4 +1,6 @@
-// ── Data types (no framework dependency) ──────────────────────────────
+import type { ReactNode } from 'react';
+
+// ── Data types (CMS-shaped helpers; kit UI is composition-only) ───────
 
 export interface FooterLink {
   _key: string;
@@ -16,7 +18,7 @@ export interface FooterColumn {
 export interface FooterSocialLink {
   url?: string | null;
   label: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }
 
 export interface FooterSocialLinks {

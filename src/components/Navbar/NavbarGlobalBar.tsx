@@ -1,6 +1,35 @@
 import React from 'react';
 import { styled, XStack, YStack } from 'tamagui';
 
+// ── Density tokens (runtime props — styled variants alone do not emit CSS) ─
+
+type Density = 'compact' | 'default' | 'spacious';
+
+const INNER_SPACE: Record<
+  Density,
+  {
+    paddingHorizontal: '$3' | '$4' | '$6';
+    paddingVertical: '$1' | '$1.5' | '$2';
+    gap: '$1.5' | '$2' | '$3';
+  }
+> = {
+  compact: {
+    paddingHorizontal: '$3',
+    paddingVertical: '$1',
+    gap: '$1.5',
+  },
+  default: {
+    paddingHorizontal: '$4',
+    paddingVertical: '$1.5',
+    gap: '$2',
+  },
+  spacious: {
+    paddingHorizontal: '$6',
+    paddingVertical: '$2',
+    gap: '$3',
+  },
+};
+
 // ── Styled Frames ─────────────────────────────────────────────────────
 
 export const GlobalBarFrame = styled(YStack, {
@@ -20,6 +49,9 @@ export const GlobalBarInner = styled(XStack, {
   maxWidth: 1280,
   alignItems: 'center',
   justifyContent: 'space-between',
+  paddingHorizontal: '$4',
+  paddingVertical: '$1.5',
+  gap: '$2',
 
   variants: {
     density: {
@@ -46,9 +78,7 @@ export const GlobalBarInner = styled(XStack, {
   },
 });
 
-// ── Component ───��─────────────────────────────────────────────────────
-
-type Density = 'compact' | 'default' | 'spacious';
+// ── Component ─────────────────────────────────────────────────────────
 
 /**
  * Optional top utility bar above the main navigation.
@@ -70,9 +100,16 @@ export function NavbarGlobalBar({
   /** Spacing preset. Default: 'default' */
   density?: Density;
 }) {
+  const space = INNER_SPACE[density];
+
   return (
     <GlobalBarFrame>
-      <GlobalBarInner density={density}>
+      <GlobalBarInner
+        density={density}
+        paddingHorizontal={space.paddingHorizontal}
+        paddingVertical={space.paddingVertical}
+        gap={space.gap}
+      >
         {children}
       </GlobalBarInner>
     </GlobalBarFrame>

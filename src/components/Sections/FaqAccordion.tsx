@@ -1,94 +1,176 @@
-import React from 'react';
-import { Accordion, YStack, XStack, H2, Text, View } from 'tamagui';
-import { useSections } from './SectionsContext';
-import type { SectionFaqItem, SectionLink } from './types';
+import React, { useId } from 'react';
+import { Accordion, YStack, XStack, H2, H3, Text, View } from 'tamagui';
 
-export interface FaqAccordionProps {
-  title?: string | null;
-  eyebrow?: string | null;
-  subtitle?: string | null;
-  faqs?: SectionFaqItem[] | null;
-  link?: SectionLink | null;
-  /** Override the default Chip/eyebrow renderer */
-  renderEyebrow?: (eyebrow: string) => React.ReactNode;
-  /** Render a link arrow icon */
-  renderArrowIcon?: () => React.ReactNode;
-  /** Render structured data (JSON-LD) for FAQs */
-  renderJsonLd?: (faqs: SectionFaqItem[]) => React.ReactNode;
+export interface FaqRootProps {
+  children: React.ReactNode;
+  id?: string;
 }
 
-export function FaqAccordionSection({
-  title,
-  eyebrow,
-  subtitle,
-  faqs,
-  link,
-  renderEyebrow,
-  renderArrowIcon,
-  renderJsonLd,
-}: FaqAccordionProps) {
-  const { renderRichText, LinkComponent } = useSections();
-  const Link = LinkComponent ?? 'a';
-
+export function FaqRoot({ children, id = 'faq' }: FaqRootProps) {
   return (
     <View
-      id="faq"
+      id={id}
       marginTop="$4"
       $md={{ marginVertical: '$6', paddingHorizontal: '$6' }}
       paddingHorizontal="$4"
       maxWidth={1200}
+      width="100%"
+      alignSelf="center"
       tag="section"
     >
-      {renderJsonLd && faqs && renderJsonLd(faqs)}
-      <View maxWidth={1200} width="100%" marginHorizontal="auto" id="faq-content">
-        <YStack alignItems="center" marginHorizontal="auto" gap="$8" width="100%">
-          {eyebrow && (
-            renderEyebrow ? renderEyebrow(eyebrow) : (
-              <View
-                backgroundColor="$color4"
-                borderRadius={999}
-                paddingHorizontal="$3"
-                paddingVertical="$1"
-              >
-                <span style={{ color: 'var(--color9, #666)', fontSize: 12 }}>{eyebrow}</span>
-              </View>
-            )
-          )}
-          <H2 textAlign="center">{title}</H2>
-          {subtitle && <Text>{subtitle}</Text>}
-          <Accordion type="single" collapsible width="100%">
-            {faqs?.map((faq, index) => (
-              <Accordion.Item value={faq._id} key={`AccordionItem-${faq._id}-${index}`}>
-                <Accordion.Header width="100%">
-                  <Accordion.Trigger>{faq.title}</Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                  {renderRichText && renderRichText(faq.richText ?? [], 'text-sm md:text-base')}
-                </Accordion.Content>
-              </Accordion.Item>
-            ))}
-          </Accordion>
-          {link?.href && (
-            <YStack width="100%" paddingVertical="$6">
-              <Text marginBottom="$2" fontSize="$2" color="$accent10">{link.title}</Text>
-              <Link
-                href={link.href ?? '#'}
-                target={link.openInNewTab ? '_blank' : '_self'}
-                style={{ textDecoration: 'none' }}
-              >
-                <XStack alignItems="center" gap="$2">
-                  <Text fontSize="$4" fontWeight="500">{link.description}</Text>
-                  {renderArrowIcon ? renderArrowIcon() : (
-                    <YStack borderRadius={9999} borderWidth={1} padding={4}>
-                      <span style={{ fontSize: 14 }}>↗</span>
-                    </YStack>
-                  )}
-                </XStack>
-              </Link>
-            </YStack>
-          )}
-        </YStack>
-      </View>
+      <YStack alignItems="center" marginHorizontal="auto" gap="$8" width="100%" id={`${id}-content`}>
+        {children}
+      </YStack>
     </View>
   );
 }
+
+export function FaqHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <YStack alignItems="center" gap="$3" width="100%">
+      {children}
+    </YStack>
+  );
+}
+
+export function FaqEyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <View backgroundColor="$color4" borderRadius={999} paddingHorizontal="$3" paddingVertical="$1">
+      {children}
+    </View>
+  );
+}
+
+export function FaqTitle({ children }: { children: React.ReactNode }) {
+  return <H2 textAlign="center">{children}</H2>;
+}
+
+export function FaqSubtitle({ children }: { children: React.ReactNode }) {
+  return <Text textAlign="center" color="$color10">{children}</Text>;
+}
+
+/** Optional category group — wrap GroupTitle + Items */
+export function FaqGroup({ children }: { children: React.ReactNode }) {
+  return (
+    <YStack width="100%" gap="$3">
+      {children}
+    </YStack>
+  );
+}
+
+export function FaqGroupTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <H3
+      fontSize="$2"
+      letterSpacing={1}
+      textTransform="uppercase"
+      color="$color10"
+      marginTop="$4"
+      marginBottom="$2"
+    >
+      {children}
+    </H3>
+  );
+}
+
+/** Accordion list shell — wrap Faq.Item children */
+export function FaqList({
+  children,
+  type = 'single',
+}: {
+  children: React.ReactNode;
+  type?: 'single' | 'multiple';
+}) {
+  return (
+    <Accordion type={type} collapsible={type === 'single'} width="100%">
+      {children}
+    </Accordion>
+  );
+}
+
+export function FaqItem({
+  children,
+  value,
+}: {
+  children: React.ReactNode;
+  /** Accordion value; auto-generated if omitted */
+  value?: string;
+}) {
+  const autoId = useId();
+  const childArray = React.Children.toArray(children);
+  const trigger = childArray.find(
+    (c) => React.isValidElement(c) && (c.type as { displayName?: string }).displayName === 'FaqTrigger',
+  );
+  const content = childArray.find(
+    (c) => React.isValidElement(c) && (c.type as { displayName?: string }).displayName === 'FaqContent',
+  );
+
+  return (
+    <Accordion.Item value={value ?? autoId} width="100%">
+      <Accordion.Header width="100%">
+        <Accordion.Trigger
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          paddingVertical="$4"
+          paddingHorizontal="$2"
+          minHeight={48}
+          borderBottomWidth={1}
+          borderColor="$borderColor"
+          backgroundColor="transparent"
+          width="100%"
+        >
+          {trigger}
+        </Accordion.Trigger>
+      </Accordion.Header>
+      <Accordion.Content paddingVertical="$3" paddingHorizontal="$2">
+        {content}
+      </Accordion.Content>
+    </Accordion.Item>
+  );
+}
+
+export function FaqTrigger({ children }: { children: React.ReactNode }) {
+  return (
+    <XStack flex={1} justifyContent="space-between" alignItems="center" gap="$3" width="100%">
+      <Text fontSize="$4" fontWeight="500" color="$color12" textAlign="left" flex={1}>
+        {children}
+      </Text>
+      <Text fontSize="$5" color="$color10">
+        +
+      </Text>
+    </XStack>
+  );
+}
+FaqTrigger.displayName = 'FaqTrigger';
+
+export function FaqContent({ children }: { children: React.ReactNode }) {
+  return <YStack gap="$2">{children}</YStack>;
+}
+FaqContent.displayName = 'FaqContent';
+
+export function FaqLink({ children }: { children: React.ReactNode }) {
+  return (
+    <YStack width="100%" paddingVertical="$4">
+      {children}
+    </YStack>
+  );
+}
+
+export const Faq = {
+  Root: FaqRoot,
+  Header: FaqHeader,
+  Eyebrow: FaqEyebrow,
+  Title: FaqTitle,
+  Subtitle: FaqSubtitle,
+  Group: FaqGroup,
+  GroupTitle: FaqGroupTitle,
+  List: FaqList,
+  Item: FaqItem,
+  Trigger: FaqTrigger,
+  Content: FaqContent,
+  Link: FaqLink,
+} as const;
+
+/** @deprecated Use `Faq` compound */
+export const FaqAccordion = Faq;

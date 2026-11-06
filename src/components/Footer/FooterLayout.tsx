@@ -1,69 +1,68 @@
 import React from 'react';
-import { XStack, YStack } from 'tamagui';
+import { XStack, YStack, useMedia } from 'tamagui';
+import { FooterNavProvider, FooterProvider } from './FooterContext';
+import type { FooterCollapseTrigger, FooterContextValue } from './FooterContext';
 
 /**
- * Root footer container. Provides the footer layout with responsive padding.
- * Compose FooterLogo, FooterSocials, FooterColumns, FooterBottom inside.
- *
- * @example
- * <FooterRoot>
- *   <FooterContent>
- *     <FooterBrand>
- *       <FooterLogo>...</FooterLogo>
- *       <FooterSocials ... />
- *     </FooterBrand>
- *     <FooterColumns columns={columns} />
- *   </FooterContent>
- *   <FooterBottom siteTitle="My App" />
- * </FooterRoot>
+ * Root footer. Absorbs link config (no separate Provider required).
+ * JSX / DOM order of children = visual order.
+ * Spacing is denser below `$lg` (audit / Headspace–Herman footers).
  */
-export function FooterRoot({ children }: { children: React.ReactNode }) {
+export function FooterRoot({
+  children,
+  linkComponent,
+}: {
+  children: React.ReactNode;
+  linkComponent?: FooterContextValue['LinkComponent'];
+}) {
   return (
-    <YStack tag="footer" marginTop="$12" paddingBottom="$8" backgroundColor="$background">
-      <YStack tag="section" alignSelf="center" width="100%" paddingHorizontal="$4">
-        <YStack minHeight={500} $lg={{ minHeight: 'auto' }}>
-          {children}
+    <FooterProvider linkComponent={linkComponent}>
+      <YStack
+        tag="footer"
+        marginTop="$8"
+        paddingBottom="$6"
+        backgroundColor="$background"
+        $lg={{ marginTop: '$12', paddingBottom: '$8' }}
+      >
+        <YStack tag="section" alignSelf="center" width="100%" paddingHorizontal="$4" maxWidth={1200}>
+          <YStack gap="$5" $lg={{ gap: '$8' }}>
+            {children}
+          </YStack>
         </YStack>
       </YStack>
+    </FooterProvider>
+  );
+}
+
+/** Optional promo / CTA strip above Main. */
+export function FooterTop({ children }: { children: React.ReactNode }) {
+  return (
+    <YStack width="100%" paddingVertical="$3" $lg={{ paddingVertical: '$4' }}>
+      {children}
     </YStack>
   );
 }
 
 /**
- * Main content area of the footer — holds brand section and columns side by side.
- * Stacks vertically on mobile, horizontally on desktop.
- *
- * @example
- * <FooterContent>
- *   <FooterBrand>...</FooterBrand>
- *   <FooterColumns columns={columns} />
- * </FooterContent>
+ * Main row: Brand / Nav / Aside in **JSX order** (no CSS `order` reordering).
+ * Stacks on mobile; row on `$lg`.
  */
-export function FooterContent({ children }: { children: React.ReactNode }) {
+export function FooterMain({ children }: { children: React.ReactNode }) {
   return (
     <XStack
       flexDirection="column"
-      alignItems="center"
+      alignItems="stretch"
       justifyContent="space-between"
-      gap="$10"
-      $lg={{ flexDirection: 'row' }}
+      gap="$5"
+      width="100%"
+      $lg={{ flexDirection: 'row', alignItems: 'flex-start', gap: '$10' }}
     >
       {children}
     </XStack>
   );
 }
 
-/**
- * Brand section — holds logo, subtitle, and social icons.
- * Centered on mobile, left-aligned on desktop.
- *
- * @example
- * <FooterBrand>
- *   <FooterLogo><img src="/logo.svg" /></FooterLogo>
- *   <FooterSubtitle text="Building the future" />
- *   <FooterSocials socialLinks={socialLinks} />
- * </FooterBrand>
- */
+/** Brand column — centered below `$lg`, left on desktop. */
 export function FooterBrand({ children }: { children: React.ReactNode }) {
   return (
     <YStack
@@ -72,10 +71,95 @@ export function FooterBrand({ children }: { children: React.ReactNode }) {
       flexShrink={1}
       flexDirection="column"
       alignItems="center"
-      justifyContent="space-between"
-      gap="$6"
-      $md={{ gap: '$8' }}
-      $lg={{ alignItems: 'flex-start' }}
+      alignSelf="center"
+      justifyContent="flex-start"
+      gap="$3"
+      $lg={{
+        width: 'auto',
+        flexBasis: 240,
+        flexGrow: 0,
+        flexShrink: 0,
+        maxWidth: 280,
+        gap: '$6',
+        alignItems: 'flex-start',
+        alignSelf: 'flex-start',
+      }}
+    >
+      {children}
+    </YStack>
+  );
+}
+
+/**
+ * Nav columns container. When `collapseOnMobile` (default true), each
+ * `Footer.Column` becomes an accordion item below `$lg`.
+ *
+ * `collapseTrigger`: `chevron` (default), `plus` (Headspace), `caret` (HubSpot / Herman `>`).
+ */
+export function FooterNav({
+  children,
+  collapseOnMobile = true,
+  collapseTrigger = 'chevron',
+}: {
+  children: React.ReactNode;
+  collapseOnMobile?: boolean;
+  collapseTrigger?: FooterCollapseTrigger;
+}) {
+  const media = useMedia();
+  const collapsing = Boolean(collapseOnMobile && !media.lg);
+
+  if (collapsing) {
+    return (
+      <FooterNavProvider collapsing collapseTrigger={collapseTrigger}>
+        <YStack width="100%" flex={1} borderTopWidth={1} borderColor="$borderColor">
+          {children}
+        </YStack>
+      </FooterNavProvider>
+    );
+  }
+
+  return (
+    <FooterNavProvider collapsing={false} collapseTrigger={collapseTrigger}>
+      {/*
+        No width:100% — that stole the Main row and stacked/ overlapped Aside.
+        Wrap allowed for mega footers (Coursera 6 cols); Brand max-width keeps
+        typical 3-col cms footers on one row.
+      */}
+      <XStack
+        gap="$6"
+        flex={1}
+        flexShrink={1}
+        minWidth={0}
+        flexWrap="wrap"
+        alignItems="flex-start"
+        justifyContent="flex-start"
+        $lg={{ gap: '$8' }}
+      >
+        {children}
+      </XStack>
+    </FooterNavProvider>
+  );
+}
+
+/** Aside — apps, newsletter, etc. Centered below `$lg`, left on desktop. */
+export function FooterAside({ children }: { children: React.ReactNode }) {
+  return (
+    <YStack
+      width="100%"
+      maxWidth={280}
+      gap="$3"
+      alignItems="center"
+      alignSelf="center"
+      $lg={{
+        width: 'auto',
+        maxWidth: 200,
+        flexGrow: 0,
+        flexShrink: 0,
+        flexBasis: 'auto',
+        gap: '$4',
+        alignItems: 'flex-start',
+        alignSelf: 'flex-start',
+      }}
     >
       {children}
     </YStack>

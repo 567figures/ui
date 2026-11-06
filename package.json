@@ -8,6 +8,12 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "files": [
+    "src",
+    "docs",
+    "AGENTS.md",
+    "README.md"
+  ],
   "scripts": {
     "start": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",

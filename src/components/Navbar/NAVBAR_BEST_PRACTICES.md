@@ -48,6 +48,12 @@ flowchart TD
 
 ---
 
+## Typography
+
+`Navbar.Item`, `Navbar.DropdownTrigger`, and `Navbar.AppBarItem` default label tokens to `$body` / `$4` / `400` (via `navTypography`). Any child (`Anchor`, `Text`, `Button`, …) inherits those unless it sets `fontFamily` / `fontSize` / `fontWeight` explicitly.
+
+---
+
 ## Responsive Columns
 
 `DropdownContent` uses a desktop-first approach with `$maxXxx` breakpoints:

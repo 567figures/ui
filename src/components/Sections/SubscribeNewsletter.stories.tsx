@@ -1,88 +1,62 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { SubscribeNewsletter } from './SubscribeNewsletter';
-import { SectionsProvider } from './SectionsContext';
+import { Text } from 'tamagui';
 import { action } from '@storybook/addon-actions';
+import { Subscribe } from './SubscribeNewsletter';
 
-const meta: Meta<typeof SubscribeNewsletter> = {
+const meta: Meta = {
   title: 'Sections/SubscribeNewsletter',
-  component: SubscribeNewsletter,
-  parameters: { layout: 'fullscreen' },
-  decorators: [
-    (Story) => (
-      <SectionsProvider
-        renderRichText={(richText, className) => (
-          <p className={className} style={{ color: '#555', margin: 0 }}>
-            {Array.isArray(richText)
-              ? richText.map((block: any) =>
-                  block?.children?.map((child: any) => child.text).join('')
-                ).join(' ')
-              : ''}
-          </p>
-        )}
-      >
-        <div style={{ padding: 20 }}>
-          <Story />
-        </div>
-      </SectionsProvider>
-    ),
-  ],
+  parameters: { layout: 'padded' },
 };
 
 export default meta;
-type Story = StoryObj<typeof SubscribeNewsletter>;
-
-const mockSubTitle = [
-  {
-    _type: 'block',
-    _key: '1',
-    children: [{ _type: 'span', text: 'Get the latest updates, tips, and resources delivered straight to your inbox.' }],
-  },
-];
-
-const mockHelperText = [
-  {
-    _type: 'block',
-    _key: '1',
-    children: [{ _type: 'span', text: 'No spam, unsubscribe at any time. We respect your privacy.' }],
-  },
-];
+type Story = StoryObj;
 
 export const Default: Story = {
-  args: {
-    title: 'Stay in the Loop',
-    subTitle: mockSubTitle,
-    helperText: mockHelperText,
-    onSubmit: action('subscribe'),
-  },
+  render: () => (
+    <Subscribe.Root>
+      <Subscribe.Title>Sign up for our newsletter</Subscribe.Title>
+      <Subscribe.Body>
+        <Text textAlign="center" color="$color10">
+          Product updates and stories — no spam.
+        </Text>
+      </Subscribe.Body>
+      <Subscribe.Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const data = new FormData(e.currentTarget);
+          action('subscribe')(data.get('email'));
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            width: '100%',
+            border: '1px solid #e5e7eb',
+            borderRadius: 8,
+            padding: 8,
+            alignItems: 'center',
+          }}
+        >
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="Enter your email"
+            style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14 }}
+          />
+          <button type="submit" style={{ padding: '8px 12px', cursor: 'pointer' }}>
+            Subscribe
+          </button>
+        </div>
+      </Subscribe.Form>
+      <Subscribe.Helper>
+        <Text fontSize="$1" color="$color9">
+          By subscribing you agree to our privacy policy.
+        </Text>
+      </Subscribe.Helper>
+    </Subscribe.Root>
+  ),
 };
 
-export const WithoutHelper: Story = {
-  args: {
-    title: 'Subscribe to Our Newsletter',
-    subTitle: mockSubTitle,
-    helperText: null,
-    onSubmit: action('subscribe'),
-  },
-};
-
-export const Minimal: Story = {
-  args: {
-    title: 'Get Updates',
-    subTitle: null,
-    helperText: null,
-    placeholder: 'your@email.com',
-    onSubmit: action('subscribe'),
-  },
-};
-
-export const CustomPlaceholder: Story = {
-  args: {
-    title: 'Join Our Community',
-    subTitle: mockSubTitle,
-    helperText: mockHelperText,
-    placeholder: 'you@company.com',
-    submitLabel: 'Join now',
-    onSubmit: action('subscribe'),
-  },
-};

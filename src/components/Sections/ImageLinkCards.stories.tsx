@@ -1,111 +1,57 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ImageLinkCards } from './ImageLinkCards';
+import { Text } from 'tamagui';
 import { SectionsProvider } from './SectionsContext';
-import type { SectionCard } from './types';
+import { ImageLinkCards } from './ImageLinkCards';
 
-const meta: Meta<typeof ImageLinkCards> = {
+const meta: Meta = {
   title: 'Sections/ImageLinkCards',
-  component: ImageLinkCards,
-  parameters: { layout: 'fullscreen' },
+  parameters: { layout: 'padded' },
   decorators: [
     (Story) => (
-      <SectionsProvider
-        renderRichText={(richText, className) => (
-          <p className={className} style={{ color: '#666' }}>
-            {Array.isArray(richText)
-              ? richText.map((block: any) =>
-                  block?.children?.map((child: any) => child.text).join('')
-                ).join(' ')
-              : ''}
-          </p>
-        )}
-        renderImage={({ className }) => (
-          <div
-            className={className}
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: '#d1d5db',
-              position: 'absolute',
-              inset: 0,
-            }}
-          />
-        )}
-      >
-        <div style={{ padding: 20 }}>
-          <Story />
-        </div>
+      <SectionsProvider>
+        <Story />
       </SectionsProvider>
     ),
   ],
 };
 
 export default meta;
-type Story = StoryObj<typeof ImageLinkCards>;
-
-const mockCards: SectionCard[] = [
-  {
-    _key: '1',
-    title: 'Design System',
-    description: 'A comprehensive design system with tokens, components, and patterns.',
-    image: { asset: { _ref: 'image-1' }, alt: 'Design System' },
-    href: '/design-system',
-  },
-  {
-    _key: '2',
-    title: 'Documentation',
-    description: 'Detailed guides and API references for every component.',
-    image: { asset: { _ref: 'image-2' }, alt: 'Documentation' },
-    href: '/docs',
-  },
-  {
-    _key: '3',
-    title: 'Templates',
-    description: 'Ready-to-use page templates for common use cases.',
-    image: { asset: { _ref: 'image-3' }, alt: 'Templates' },
-    href: '/templates',
-  },
-  {
-    _key: '4',
-    title: 'Community',
-    description: 'Join our community of developers and designers.',
-    image: { asset: { _ref: 'image-4' }, alt: 'Community' },
-    href: '/community',
-  },
-];
-
-const mockRichText = [
-  {
-    _type: 'block',
-    _key: '1',
-    children: [{ _type: 'span', text: 'Explore our resources to get the most out of the platform.' }],
-  },
-];
+type Story = StoryObj;
 
 export const Default: Story = {
-  args: {
-    title: 'Explore Resources',
-    eyebrow: 'Resources',
-    richText: mockRichText,
-    cards: mockCards,
-  },
+  render: () => (
+    <ImageLinkCards.Root>
+      <ImageLinkCards.Header>
+        <ImageLinkCards.Title>Explore topics</ImageLinkCards.Title>
+        <ImageLinkCards.Body>
+          <Text color="$color10">Image + title + body cards.</Text>
+        </ImageLinkCards.Body>
+      </ImageLinkCards.Header>
+      <ImageLinkCards.Grid>
+        <ImageLinkCards.Card href="/sleep">
+          <ImageLinkCards.Media>
+            <div style={{ width: '100%', height: '100%', background: '#c4b5a5' }} />
+          </ImageLinkCards.Media>
+          <ImageLinkCards.Title>Sleep</ImageLinkCards.Title>
+          <ImageLinkCards.Body>Wind down with stories and soundscapes.</ImageLinkCards.Body>
+        </ImageLinkCards.Card>
+        <ImageLinkCards.Card href="/meditation">
+          <ImageLinkCards.Media>
+            <div style={{ width: '100%', height: '100%', background: '#a8c5b8' }} />
+          </ImageLinkCards.Media>
+          <ImageLinkCards.Title>Meditation</ImageLinkCards.Title>
+          <ImageLinkCards.Body>Guided sessions for every moment.</ImageLinkCards.Body>
+        </ImageLinkCards.Card>
+        <ImageLinkCards.Card href="/stress">
+          <ImageLinkCards.Media>
+            <div style={{ width: '100%', height: '100%', background: '#b8c4d4' }} />
+          </ImageLinkCards.Media>
+          <ImageLinkCards.Title>Stress</ImageLinkCards.Title>
+          <ImageLinkCards.Body>Quick resets when you need them.</ImageLinkCards.Body>
+        </ImageLinkCards.Card>
+      </ImageLinkCards.Grid>
+    </ImageLinkCards.Root>
+  ),
 };
 
-export const TwoCards: Story = {
-  args: {
-    title: 'Featured',
-    eyebrow: null,
-    richText: null,
-    cards: mockCards.slice(0, 2),
-  },
-};
-
-export const WithoutImages: Story = {
-  args: {
-    title: 'Quick Links',
-    eyebrow: 'Navigate',
-    richText: mockRichText,
-    cards: mockCards.map((c) => ({ ...c, image: null })),
-  },
-};

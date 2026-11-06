@@ -17,11 +17,22 @@ Tamagui UI kit (defaults + compounds) for 567figures apps.
 ## Consumption
 
 ```json
-"@567f/ui": "link:../ui"
+{
+  "dependencies": {
+    "@567f/ui": "file:../ui"
+  },
+  "dependenciesMeta": {
+    "@567f/ui": { "injected": true }
+  }
+}
 ```
+
+Do not use `link:` or Vite-alias `@567f/ui` → sibling `src/`.
 
 ```ts
 import { UiProvider, Navbar } from '@567f/ui';
 ```
 
-Never relative paths into this repo’s `src/` from consumers (CONSTITUTION R-001).
+Never relative paths into this repo’s `src/` from consumers (CONSTITUTION R-001). `react` / `react-dom` are peers only.
+
+**Canonical consumer:** sibling [`../cms-starter`](../cms-starter).

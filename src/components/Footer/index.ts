@@ -7,26 +7,48 @@ export type {
   FooterLegalLink,
 } from './types';
 
+export type { FooterCollapseTrigger } from './FooterContext';
+
 // Context
-export { useFooter } from './FooterContext';
+export { useFooter, useFooterNav } from './FooterContext';
+export type { FooterContextValue, FooterNavContextValue, FooterLinkComponentProps } from './FooterContext';
 
 // ── Compound component ────────────────────────────────────────────────
 
-import { FooterProvider } from './FooterContext';
-import { FooterRoot, FooterContent, FooterBrand } from './FooterLayout';
-import { FooterLogo, FooterSubtitle } from './FooterLogo';
-import { FooterSocials } from './FooterSocials';
-import { FooterColumns } from './FooterColumns';
-import { FooterBottom } from './FooterBottom';
+import {
+  FooterRoot,
+  FooterTop,
+  FooterMain,
+  FooterBrand,
+  FooterNav,
+  FooterAside,
+} from './FooterLayout';
+import {
+  FooterLogo,
+  FooterSubtitle,
+  FooterColumn,
+  FooterColumnTitle,
+  FooterItem,
+  FooterBottomBar,
+  FooterCopyright,
+  FooterLegal,
+  FooterMeta,
+} from './FooterSlots';
 
 export const Footer = {
-  Provider: FooterProvider,
   Root: FooterRoot,
-  Content: FooterContent,
+  Top: FooterTop,
+  Main: FooterMain,
   Brand: FooterBrand,
   Logo: FooterLogo,
   Subtitle: FooterSubtitle,
-  Socials: FooterSocials,
-  Columns: FooterColumns,
-  Bottom: FooterBottom,
+  Nav: FooterNav,
+  Column: FooterColumn,
+  ColumnTitle: FooterColumnTitle,
+  Item: FooterItem,
+  Aside: FooterAside,
+  Bottom: FooterBottomBar,
+  Copyright: FooterCopyright,
+  Legal: FooterLegal,
+  Meta: FooterMeta,
 } as const;

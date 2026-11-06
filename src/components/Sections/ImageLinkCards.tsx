@@ -1,122 +1,139 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
+import { View, YStack, XStack, H2, H3, Text } from 'tamagui';
 import { useSections } from './SectionsContext';
-import type { SectionCard } from './types';
 
-export interface ImageLinkCardsProps {
-  title?: string | null;
-  eyebrow?: string | null;
-  richText?: any[] | null;
-  cards?: SectionCard[] | null;
-  /** Override the default Chip/eyebrow renderer */
-  renderEyebrow?: (eyebrow: string) => React.ReactNode;
-  /** Custom card renderer — if not provided, uses default ImageLinkCard */
-  renderCard?: (card: SectionCard, index: number, total: number) => React.ReactNode;
+const InCardContext = createContext(false);
+
+export interface ImageLinkCardsRootProps {
+  children: React.ReactNode;
+  id?: string;
 }
 
-export function ImageLinkCards({
-  title,
-  eyebrow,
-  richText,
-  cards,
-  renderEyebrow,
-  renderCard,
-}: ImageLinkCardsProps) {
-  const { renderRichText, renderImage, LinkComponent } = useSections();
+export function ImageLinkCardsRoot({ children, id = 'image-link-cards' }: ImageLinkCardsRootProps) {
+  return (
+    <YStack
+      id={id}
+      marginVertical="$8"
+      paddingHorizontal="$4"
+      maxWidth={1200}
+      width="100%"
+      alignSelf="center"
+      tag="section"
+      gap="$8"
+    >
+      {children}
+    </YStack>
+  );
+}
+
+export function ImageLinkCardsHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <YStack alignItems="center" gap="$4" width="100%">
+      {children}
+    </YStack>
+  );
+}
+
+export function ImageLinkCardsEyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <View backgroundColor="$color4" borderRadius={999} paddingHorizontal="$3" paddingVertical="$1">
+      {children}
+    </View>
+  );
+}
+
+export function ImageLinkCardsTitle({ children }: { children: React.ReactNode }) {
+  const inCard = useContext(InCardContext);
+  if (inCard) {
+    return (
+      <H3 fontSize="$5" fontWeight="500" color="$color12">
+        {children}
+      </H3>
+    );
+  }
+  return <H2 textAlign="center">{children}</H2>;
+}
+
+export function ImageLinkCardsBody({ children }: { children: React.ReactNode }) {
+  const inCard = useContext(InCardContext);
+  if (inCard) {
+    return (
+      <Text fontSize="$2" color="$color10">
+        {children}
+      </Text>
+    );
+  }
+  return <YStack gap="$2" alignItems="center">{children}</YStack>;
+}
+
+export function ImageLinkCardsGrid({ children }: { children: React.ReactNode }) {
+  return (
+    <XStack
+      gap="$2"
+      flexWrap="wrap"
+      width="100%"
+      flexDirection="column"
+      $md={{ flexDirection: 'row' }}
+    >
+      {children}
+    </XStack>
+  );
+}
+
+export function ImageLinkCardsCard({
+  children,
+  href,
+}: {
+  children: React.ReactNode;
+  href?: string | null;
+}) {
+  const { LinkComponent } = useSections();
   const Link = LinkComponent ?? 'a';
 
+  const inner = (
+    <InCardContext.Provider value={true}>
+      <YStack
+        flex={1}
+        minWidth={220}
+        $md={{ minHeight: 360 }}
+        minHeight={280}
+        padding="$6"
+        borderRadius="$6"
+        backgroundColor="$color3"
+        justifyContent="flex-end"
+        gap="$2"
+        overflow="hidden"
+        position="relative"
+      >
+        {children}
+      </YStack>
+    </InCardContext.Provider>
+  );
+
+  if (!href) return inner;
+
   return (
-    <section id="image-link-cards" style={{ marginTop: '4rem', marginBottom: '4rem' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1rem' }}>
-        <div style={{ display: 'flex', width: '100%', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', textAlign: 'center' }}>
-            {eyebrow && (
-              renderEyebrow ? renderEyebrow(eyebrow) : (
-                <span style={{
-                  backgroundColor: 'var(--color4, #f0f0f0)',
-                  borderRadius: 999,
-                  padding: '4px 12px',
-                  fontSize: 12,
-                  color: 'var(--color9, #666)',
-                }}>
-                  {eyebrow}
-                </span>
-              )
-            )}
-            <h2 style={{ fontSize: '2rem', fontWeight: 600, textWrap: 'balance' }}>{title}</h2>
-            {renderRichText && richText && renderRichText(richText, 'text-balance')}
-          </div>
-          {Array.isArray(cards) && cards.length > 0 && (
-            <div style={{
-              marginTop: '4rem',
-              display: 'grid',
-              width: '100%',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '0.25rem',
-            }}>
-              {cards.map((card, idx) => (
-                renderCard
-                  ? renderCard(card, idx, cards.length)
-                  : <DefaultImageLinkCard key={card._key} card={card} index={idx} total={cards.length} />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
+    <Link href={href} style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 220 }}>
+      {inner}
+    </Link>
   );
 }
 
-// ── Default card implementation ───────────────────────────────────────
-
-function DefaultImageLinkCard({
-  card,
-  index,
-  total,
-}: {
-  card: SectionCard;
-  index: number;
-  total: number;
-}) {
-  const { renderImage } = useSections();
-  const { image, description, title, href } = card ?? {};
-
-  let borderRadius = '0';
-  if (index === 0) borderRadius = '1.5rem 0 0 1.5rem';
-  if (index === total - 1) borderRadius = '0 1.5rem 1.5rem 0';
-  if (total === 1) borderRadius = '1.5rem';
-
+export function ImageLinkCardsMedia({ children }: { children: React.ReactNode }) {
   return (
-    <a
-      href={href ?? '#'}
-      style={{
-        borderRadius,
-        padding: '2rem',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        minHeight: 400,
-        textDecoration: 'none',
-        backgroundColor: 'rgba(128,128,128,0.1)',
-      }}
-    >
-      {image?.asset && renderImage && (
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, mixBlendMode: 'multiply' }}>
-          {renderImage({
-            asset: image,
-            loading: 'eager',
-            priority: true,
-            quality: 100,
-            fill: true,
-            className: 'object-cover grayscale opacity-40',
-          })}
-        </div>
-      )}
-      <div style={{ zIndex: 2, paddingTop: '16rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 500, color: '#111827' }}>{title}</h3>
-        <p style={{ fontSize: '0.875rem', color: '#374151' }}>{description}</p>
-      </div>
-    </a>
+    <View position="absolute" top={0} left={0} right={0} bottom={0} zIndex={0} opacity={0.45}>
+      {children}
+    </View>
   );
 }
+
+export const ImageLinkCards = {
+  Root: ImageLinkCardsRoot,
+  Header: ImageLinkCardsHeader,
+  Eyebrow: ImageLinkCardsEyebrow,
+  Title: ImageLinkCardsTitle,
+  Body: ImageLinkCardsBody,
+  Grid: ImageLinkCardsGrid,
+  Card: ImageLinkCardsCard,
+  Media: ImageLinkCardsMedia,
+} as const;

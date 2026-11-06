@@ -6,6 +6,14 @@ This UI library follows a **headless composition** pattern. Components provide *
 
 ---
 
+## Composition family
+
+Navbar, Drawer, Hero, **Footer**, **CTA**, **Faq**, **FeatureCards**, **ImageLinkCards**, **Subscribe**: JSX / DOM order = visual order; no CMS arrays inside the kit. Map CMS data in the consumer (`@567f/astro-sanity`), then compose slots.
+
+See [docs/REFERENCES.md](../../docs/REFERENCES.md) for real-site layout notes.
+
+---
+
 ## Core Principles
 
 ### 1. Composition over Configuration
@@ -182,8 +190,10 @@ flowchart TD
   root --> sub["ComponentSubPart.tsx — sub-components"]
   root --> stories["ComponentName.stories.tsx — Storybook"]
   root --> practices["COMPONENT_BEST_PRACTICES.md — optional"]
-  root --> todo["TODO.md — optional"]
 ```
+
+Track unfinished component work in [docs/DEBT.md](../../docs/DEBT.md) — do not add per-component `TODO.md`.
+
 
 ### index.ts Pattern
 

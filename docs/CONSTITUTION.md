@@ -21,7 +21,7 @@ import { UiProvider, Navbar } from '@567f/ui';
 Never relative/filesystem imports into this repo from outside (`../../../ui/src/...`).  
 Inside this package, relative `./` / `../` among local files is fine.
 
-Bundler aliases that map `@567f/ui` → `src` are tooling-only.
+Consumers must **not** Vite-alias `@567f/ui` → this checkout’s `src/`. Use `file:../ui` + `dependenciesMeta.injected` so peers resolve from the consumer (one React). Tamagui plugin `config:` may point at the injected copy under the consumer’s `node_modules/@567f/ui/...`.
 
 ### R-002 English-only agent docs
 
@@ -33,11 +33,15 @@ See [DEBT.md](./DEBT.md). Do not resolve items unless the user explicitly asks.
 
 ### R-004 Composition defaults
 
-Follow [src/components/BEST_PRACTICES.md](../src/components/BEST_PRACTICES.md) for new compound components. Some existing Footer/Sections APIs are more data-driven (DEBT-002 accepted) — do not “purify” them without an explicit redesign task.
+Follow [src/components/BEST_PRACTICES.md](../src/components/BEST_PRACTICES.md) for new compound components. Footer/Sections are composition (DEBT-002 resolved): slot APIs only.
 
 ### R-005 Defaults + override
 
 Ship default `tamaguiConfig` / themes / `UiProvider`. Consumers may pass a custom `config` to `UiProvider` for another brand (ADR-0002).
+
+### R-006 Canonical consumer
+
+The **canonical consumer** for verifying this kit is sibling `../cms-starter`. Prefer it for integration checks and examples. Other consumers: `../once`, template `webAppAstro`.
 
 ---
 
@@ -53,9 +57,9 @@ Ship default `tamaguiConfig` / themes / `UiProvider`. Consumers may pass a custo
 
 **Context:** Marketing/layout UI needed reuse outside a single app / monorepo.
 
-**Decision:** Source-consumed compound components; composition rules in BEST_PRACTICES; `link:` consumption for now. ~~No owned Tamagui config~~ → superseded by ADR-0002.
+**Decision:** Source-consumed compound components; composition rules in BEST_PRACTICES; local consume via `file:` + `injected`. ~~No owned Tamagui config~~ → superseded by ADR-0002.
 
-**Consequences:** Composition API guidance remains. Defaults: ADR-0002. Tamagui majors with consumers (DEBT-001). Data-driven Footer/Sections: DEBT-002.
+**Consequences:** Composition API guidance remains. Defaults: ADR-0002. Tamagui majors with consumers (DEBT-001). Footer/Sections composition migration: DEBT-002.
 
 ### ADR-0002: Ship default Tamagui config / themes / UiProvider
 
